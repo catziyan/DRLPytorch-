@@ -1,0 +1,105 @@
+#!/usr/bin/env python 
+# -*- coding:utf-8 -*-
+# Author:CatZiyan
+# @Time :2019/9/17 9:54
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+import torch.nn as nn
+import torch
+#from torch.autograd import Variable
+
+#Hyper parameters
+input_size = 1
+output_size = 1
+num_epochs = 600
+learning_rate = 0.1
+
+#Toy dataset
+x_train = np.array([[3.3], [4.4], [5.5], [6.71], [6.93], [4.168], [9.779], [6.182], [7.59], [2.167], [7.042],
+                   [10.791], [5.313], [7.997], [3.1]],dtype=np.float32)
+
+y_train = np.array([[1.7], [2.76], [2.09], [3.19], [1.694], [1.573], [3.366], [2.596], [2.53], [1.221], [2.837],
+                    [3.465], [1.65], [2.904], [1.3]], dtype=np.float32)
+
+
+#linear regression model
+
+class LR(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(LR, self).__init__()
+        self.linear = nn.Linear(input_size, output_size)
+
+    def forward(self, x):
+        out = self.linear(x)
+        return out
+
+model = LR(input_size, output_size)
+# model = nn.Sequential(nn.Linear(input_size, output_size))
+#Loss and Optimizer
+criterion = nn.MSELoss()
+optimizer = torch.optim.SGD(model.parameters(),lr = learning_rate)
+
+#Train and Model
+for epoch in range(num_epochs):
+    # Convert numpy array to torch Variable
+    # inputs =Variable(torch.form_numpy(x_train))
+    # targets = Variable(torch.form_numpu(y_train))
+    # 如今的版本已不需要将tensor装进Variable
+    inputs = torch.from_numpy(x_train)
+
+    targets = torch.from_numpy(y_train)
+
+    outputs = model(inputs)
+    optimizer.zero_grad() #为下一次训练清空梯度值
+    loss = criterion(outputs, targets) #反向传播，计算梯度
+    optimizer.step() #更新梯度
+
+    if (epoch+1) %5 ==0:
+        print('Epoch [%d/%d], Loss: %.4f' %(epoch+1, num_epochs, loss.item()))
+
+#Plot the graph
+plt.figure(1, figsize=(10, 3))
+plt.subplot(131)
+predicted = model(torch.from_numpy(x_train)).data.numpy()
+plt.plot(x_train, y_train, 'ro', label='Original data')
+plt.plot(x_train, predicted, label='Fitted line')
+plt.legend()
+
+
+# print(model.state_dict())
+
+#Save the Model，两种保存方法
+torch.save(model.state_dict(),'model_params.pkl') #只保存网络中的参数（速度快，占内存少）
+torch.save(model,'model.pkl') #保存整个网络
+
+# 提取网络
+def restore_net():
+    model1 = torch.load('model.pkl')
+    predicted = model1(torch.from_numpy(x_train)).data.numpy()
+
+    plt.subplot(132)
+    plt.title('model1')
+    plt.scatter(x_train, y_train)
+    plt.plot(x_train, predicted)
+
+def restore_params():
+
+    model2 =  LR(input_size, output_size)
+    # model2 = nn.Sequential(nn.Linear(1, 1))
+    model2.load_state_dict(torch.load('model_params.pkl'))
+
+    predicted = model2(torch.from_numpy(x_train)).data.numpy()
+    plt.subplot(133)
+    plt.title('model2')
+    plt.scatter(x_train, y_train)
+    plt.plot(x_train, predicted)
+    plt.show()
+
+
+restore_net()
+
+restore_params()
+
+#发现当用快速搭建法搭建的模型训练保存后，用加载参数的方法只能用快速搭建法先搭建模型2，同理当用正常搭建法搭建的模型保存后，加载时模型2要先正常搭建，否则会报错

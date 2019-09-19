@@ -17,3 +17,6 @@
 3. 增加了对模型保存和加载，快速搭建神经网络的学习笔记
  
  
+## feedforward_neural_net.py
+对书中125页代码修改为GPU版本，添加了GPUtil等几个小模块，实时监测GPU信息；
+分别在CPU和GPU下运行后：CPU用时80s，GPU用时37s。

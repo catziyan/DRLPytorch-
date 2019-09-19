@@ -1,0 +1,100 @@
+#!/usr/bin/env python 
+# -*- coding:utf-8 -*-
+# Author:CatZiyan
+# @Time :2019/9/19 15:42
+import os
+import torch
+import matplotlib.pyplot as plt
+import torchvision.datasets as dsets
+import torchvision.transforms as transforms
+import GPUtil
+import time
+
+start = time.clock()
+# 是否有GPU，device用于之后神经网络和变量的迁移
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+device = 'cpu'
+# hyper parameters
+
+input_size = 28*28
+hidden_sizie = 500
+output_size = 10
+learning_rate = 0.01
+batch_size = 100
+Epoch = 5
+#  MNIST Dataset
+
+if not(os.path.exists('./data/')) or not os.listdir('./data/'):
+    # not data dir or data is empty dir
+    DOWNLOAD = True
+else:
+    DOWNLOAD = False
+
+train_dataset = dsets.MNIST(root='./data/',
+                            train=True,
+                            transform=transforms.ToTensor(),
+                            download=DOWNLOAD)
+
+test_dataset = dsets.MNIST(root='./data/',
+                           train=False,
+                           transform=transforms.ToTensor())
+
+# Data Loader
+train_loader = torch.utils.data.DataLoader(dataset=train_dataset,
+                                           batch_size=batch_size,
+                                           shuffle=True)
+test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
+                                          batch_size=batch_size,
+                                          shuffle=False)
+
+#Neural Network Model
+
+class Net(torch.nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(Net, self).__init__()
+        self.linear1 = torch.nn.Linear(input_size, hidden_size)
+        self.relu = torch.nn.ReLU()
+        self.linear2 = torch.nn.Linear(hidden_size, output_size)
+
+    def forward(self,x):
+        x = self.linear1(x)
+        x = self.relu(x)
+        out = self.linear2(x)
+        return out
+
+net = Net(input_size, hidden_sizie, output_size).to(device)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(net.parameters(), lr=learning_rate)
+for epoch in range(Epoch):
+    # GPUtil.showUtilization() #查看GPU状态
+    for i,(images, labels) in enumerate(train_loader):
+
+        pretected = net(images.to(device).view(-1, 28*28))
+        loss = criterion(pretected, labels.to(device))
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        if (i+1)%100 ==0:
+
+            print('Epoch [%d/%d],Step [%d/%d],loss: %.4f'
+                  %(epoch+1, Epoch, i+1, len(train_dataset)//batch_size, loss.item()))
+
+
+# Test the Model
+correct = 0
+total = 0
+for (images, labels) in test_loader:
+    pretected = net(images.to(device).view(-1, 28*28))
+    _, pretected = torch.max(pretected.data, 1)
+    total += labels.size(0)
+    correct += (pretected==labels.to(device)).sum()
+
+print('Accuracy of the network on the 10000 test images: %d %%' %(100 * correct/total))
+
+# torch.save(net.state_dict(), 'model.pkl')
+# net2 = Net(input_size, hidden_sizie, output_size).to(device)
+# net2.load_state_dict(torch.load('model.pkl'))
+elapsed = (time.clock() - start)
+print('Time used:', elapsed)

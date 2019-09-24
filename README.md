@@ -44,9 +44,13 @@
 1. 全连接神经网络参数：
 
 Net(
-  (linear1): Linear(in_features=784, out_features=500, bias=True)
-  (relu): ReLU()
-  (linear2): Linear(in_features=500, out_features=10, bias=True)
+
+&#160;&#160; (linear1): Linear(in_features=784, out_features=500, bias=True)
+  
+&#160;&#160;  (relu): ReLU()
+  
+&#160;&#160;  (linear2): Linear(in_features=500, out_features=10, bias=True)
+  
 )
 
 故网络的输入为28×28，故需要对从dataloader取出的数据进行处理后输入（images.view(-1, 28×28)→images.size([batch_size,784])）
@@ -66,7 +70,9 @@ out = self.linear2(x) → x.size([100, 10])
 
 self.layer1 = nn.Sequential(
     
-   nn.Conv2d(in_channels=1,   #图片高度(1)
+   nn.Conv2d(
+   
+             in_channels=1,   #图片高度(1)
               
              out_channels=16, #卷积核个数
               
@@ -86,13 +92,13 @@ self.layer1 = nn.Sequential(
 
 self.layer2 = nn.Sequential(   
    
-   nn.Conv2d(16,32,5,1,2),    #卷积层，output shape（batch_size, 32 ,14,14）
+&#160;&#160;&#160;   nn.Conv2d(16,32,5,1,2),    #卷积层，output shape（batch_size, 32 ,14,14）
     
-   nn.BatchNorm2d(32),        #output shape（batch_size, 32 ,14,14）
+&#160;&#160;&#160;   nn.BatchNorm2d(32),        #output shape（batch_size, 32 ,14,14）
     
-   nn.ReLU(),
+&#160;&#160;&#160;   nn.ReLU(),
     
-   nn.MaxPool2d(2)            #output shape（batch_size, 32 ,7,7）
+&#160;&#160;&#160;   nn.MaxPool2d(2)            #output shape（batch_size, 32 ,7,7）
 
 )
 
@@ -106,13 +112,13 @@ self.linear = nn.Linear(7*7*32, 10)
 
 self.lstm = torch.nn.LSTM(         # if use nn.RNN(), it hardly learns
    
-   input_size=input_size,
+    input_size=input_size,
     
-   hidden_size=32,         # rnn hidden unit
+    hidden_size=32,         # rnn hidden unit
     
-   num_layers=2,           # number of rnn layer
+    num_layers=2,           # number of rnn layer
     
-   batch_first=True,       # input & output will has batch size as 1s dimension. e.g. (batch, time_step, input_size)
+    batch_first=True,       # input & output will has batch size as 1s dimension. e.g. (batch, time_step, input_size)
 )
 
 self.fc = torch.nn.Linear(hidden_size, output_size)

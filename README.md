@@ -33,3 +33,7 @@
 
 ![image](https://github.com/catziyan/DRLPytorch-/blob/master/GPU.png)
 
+## Recurrent_Neural_net.py
+对书中143页代码学习过程中，研究了两个细节问题：
+1. 在计算正确率时，用（100*(correct/total)）计算得到结果的总是0。 因为correct是由tensor计算得到的，故correct也为tensor，且数据类型为torch.int64。 在pytorch中的int/long之间的运算得到的还是整形，故计算结果总为0.
+2. 书中对out = self.fc(out[:,-1,:])分析为“这是一个二维张量，第一个维度是batch_size，第二个维度是input_size，尺寸为[100,28]”，而全连接网络的输入为elf.fc = torch.nn.Linear(hidden_size, output_size)，则显然out[:,-1,:]的尺寸应该为[batch_size, hidden_size]=[100,36].

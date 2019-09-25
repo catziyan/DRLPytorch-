@@ -15,7 +15,7 @@
 1. 无需再import torch.autograd.Variable，Tensor直接可以计算梯度
 2. 累加损失时.data[0]改为.item()，0.4以后的版本中loss是一个零维的标量，用loss.item()可以从标量中获取Python数字。
 3. 增加了对模型保存和加载，快速搭建神经网络的学习笔记
- 
+总结：https://blog.csdn.net/cat_ziyan/article/details/101344278 
  
 ## 6.2 feedforward_neural_net.py
 对书中119页代码修改为GPU版本，添加了GPUtil等几个小模块，实时监测GPU信息；
@@ -38,5 +38,3 @@
 1. 在计算正确率时，用（100*(correct/total)）计算得到结果的总是0。 因为correct是由tensor计算得到的，故correct也为tensor，且数据类型为torch.int64。 在pytorch中的int/long之间的运算得到的还是整形，故计算结果总为0.
 2. 书中对out = self.fc(out[:,-1,:])分析为“这是一个二维张量，第一个维度是batch_size，第二个维度是input_size，尺寸为[100,28]”，而全连接网络的输入为elf.fc = torch.nn.Linear(hidden_size, output_size)，则显然out[:,-1,:]的尺寸应该为[batch_size, hidden_size]=[100,36].
 
-## 橙大陈的第六章个人总结
-为使readme更加简洁，总结写在了CSDN上：https://blog.csdn.net/cat_ziyan/article/details/101344278

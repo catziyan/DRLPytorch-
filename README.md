@@ -10,13 +10,15 @@
 2. 动作价值更新公式为完整的Q计算公式（原代码将alpha取为了1）
 
 # 第六章 深度学习
+
+总结：https://blog.csdn.net/cat_ziyan/article/details/101344278 
+
 ## 6.1 linear_regression.py 
 对书中77页代码进行修改，使其适应0.4以后的版本，主要有一下3个部分
 1. 无需再import torch.autograd.Variable，Tensor直接可以计算梯度
 2. 累加损失时.data[0]改为.item()，0.4以后的版本中loss是一个零维的标量，用loss.item()可以从标量中获取Python数字。
 3. 增加了对模型保存和加载，快速搭建神经网络的学习笔记
 
-总结：https://blog.csdn.net/cat_ziyan/article/details/101344278 
  
 ## 6.2 feedforward_neural_net.py
 对书中119页代码修改为GPU版本，添加了GPUtil等几个小模块，实时监测GPU信息；

@@ -41,3 +41,5 @@
 1. 在计算正确率时，用（100*(correct/total)）计算得到结果的总是0。 因为correct是由tensor计算得到的，故correct也为tensor，且数据类型为torch.int64。 在pytorch中的int/long之间的运算得到的还是整形，故计算结果总为0.
 2. 书中对out = self.fc(out[:,-1,:])分析为“这是一个二维张量，第一个维度是batch_size，第二个维度是input_size，尺寸为[100,28]”，而全连接网络的输入为elf.fc = torch.nn.Linear(hidden_size, output_size)，则显然out[:,-1,:]的尺寸应该为[batch_size, hidden_size]=[100,36].
 
+# 第八章 DQN算法族
+第八章用了nips-DQN、nature-DQN、double-DQN、dueling DQN四种算法来训练Gym中的atari游戏—pong，相关代码在08文件夹中

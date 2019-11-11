@@ -43,3 +43,4 @@
 
 # 第八章 DQN算法族
 第八章用了nips-DQN、nature-DQN、double-DQN、dueling DQN四种算法来训练Gym中的atari游戏—pong，相关代码在08文件夹中
+相关总结：https://blog.csdn.net/cat_ziyan/article/details/101712107

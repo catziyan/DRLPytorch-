@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import collections
 from collections import deque
 import numpy as np
 import gym
@@ -7,7 +8,6 @@ import random
 from net import *
 from util import preprocess
 import time
-from wrappers import *
 import cv2
 start = time.clock()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
